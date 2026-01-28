@@ -42,6 +42,7 @@ def upper_node(state:State) -> dict:
 
 # ! 추가
 def mark_node(state: State) -> dict:
+    
     return {
         "output": state["output"] + "!",
         "log": [f"text: {state['text']}", f"mark done"]
