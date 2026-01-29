@@ -1,5 +1,5 @@
 from langchain_core.messages import HumanMessage
-from openai_client import gemini
+from LangGraph.practice.openai_client import gemini
 
 gemini_response = gemini.invoke("Explain the components of LangGraph.")
 print("Gemini's response:", gemini_response)
