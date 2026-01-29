@@ -8,15 +8,15 @@ from langgraph.checkpoint.memory import InMemorySaver
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
-
 def route(state: State) -> str:
     last = state["messages"][-1]
     text = last.content
 
-    if text.startswith("/calc "):
+    if isinstance(last, HumanMessage) and text.startswith("/calc "):
         return 'tools'
-    return 'chat'
-
+    if isinstance(last, HumanMessage):
+        return 'chat'
+    return 'end'
 
 def chat_node(state: State) -> dict:
     last = state['messages'][-1]
@@ -38,11 +38,12 @@ def tools_node(state: State) -> dict:
     return {"messages": [AIMessage(content=f"[tool] {expr} = {result}")]}
 
 builder = StateGraph(State)
+
 builder.add_node("chat", chat_node)
 builder.add_node("tools", tools_node)
-builder.add_conditional_edges(START, route, {"tools": "tools", "chat": "chat"})
+builder.add_conditional_edges(START, route, {"tools": "tools", "chat": "chat", "end": END})
 builder.add_edge("tools", "chat")
-builder.add_edge("chat", END)
+builder.add_conditional_edges("chat", route, {"tools": "tools", "chat": "chat", "end": END})
 
 checkpointer = InMemorySaver()
 
