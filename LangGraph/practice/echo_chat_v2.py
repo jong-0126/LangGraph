@@ -11,6 +11,8 @@ from openai_client import gemini
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
+
+# LLM이 도구로 인식함 @tool이 붙은 함수는
 @tool
 def calc(expression: str) -> str:
     """간단 계산기. 예: 2+3, 10-7, 4*5, 8/2 (연산자 1개만 지원)"""
@@ -28,8 +30,11 @@ def calc(expression: str) -> str:
     return "ERROR: unsupported expression"
 
 tools = [calc]
+#gemini.bind_tools를 이용해서 calc 도구를 사용할 수 있도록 설정
 llm_with_tools = gemini.bind_tools(tools)
 
+
+# LLM을 한번 호출하는 그래프 노드
 def assistant(state: State) -> dict:
     msg = llm_with_tools.invoke(state["messages"])
     return {"messages": [msg]}
