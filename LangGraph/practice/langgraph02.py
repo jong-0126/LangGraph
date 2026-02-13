@@ -39,7 +39,7 @@ def final_node(state: State) -> State:
     return state
 
 
-# ✅ 라우터: plan 결과를 보고 다음 노드를 정함
+# 라우터: plan 결과를 보고 다음 노드를 정함
 def route_after_plan(state: State) -> str:
     action = state.get("plan", {}).get("next_action")
     if action == "tool":
@@ -54,7 +54,7 @@ g.add_node("final", final_node)
 
 g.add_edge(START, "plan")
 
-# ✅ 조건 분기(딱 1개)
+# 조건 분기(딱 1개)
 g.add_conditional_edges(
     "plan",
     route_after_plan,
